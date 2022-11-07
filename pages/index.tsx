@@ -11,7 +11,7 @@ export default function Home() {
 
   const [weatherData, setWeatherData] = useState<any>({}); { city: "bangkok" }
 
-  async function getWeatherData(params:type) {
+  async function getWeatherData() {
     console.log("Button pressed");
     try {
       const serverResponse = await fetch(

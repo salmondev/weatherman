@@ -7,7 +7,7 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'openweathermap.org',
-        port: '',
+        // port: '',
         pathname: '/img/wn/**',
       },
     ],
