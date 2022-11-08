@@ -29,7 +29,11 @@ export default function Home() {
       );
       const data = await serverResponse.json();
       console.log("data: ", data);
-      if (data?.cod === "400" || data?.cod === "404") throw data;
+      if (data?.cod === "400" || data?.cod === "404") {
+        throw data;
+      } else {
+        setNotFound(data);
+      }
       setWeatherData(data);
     } catch (err) {
       setNotFound(err);
@@ -213,7 +217,7 @@ export default function Home() {
               <>
                 <Text
                   variant="gradient"
-                  gradient={{ from: 'orange', to: 'red', deg: 45 }}
+                  gradient={{ from: "orange", to: "red", deg: 45 }}
                   fw={500}
                 >
                   City not found
