@@ -5,6 +5,7 @@ import { Paper, Group, Text, TextInput, Button } from "@mantine/core";
 import { useState, useEffect } from "react";
 import { Autocomplete, TextField } from "@mui/material";
 import PropTypes from "prop-types";
+import { useRouter } from "next/router";
 
 const API_KEY = "427c653c4c7a71b95feebc57f8d32bd5";
 
@@ -12,9 +13,9 @@ export default function Home() {
   const [value, setValue] = useState<string | null>(null);
 
   const [cityInput, setCityInput] = useState<City | null>(null);
-  console.log({ cityInput });
 
   const [weatherData, setWeatherData] = useState<any>({});
+  const [notFound, setNotFound] = useState<any>({});
 
   async function getWeatherData() {
     try {
@@ -27,19 +28,27 @@ export default function Home() {
           "&units=metric"
       );
       const data = await serverResponse.json();
-      console.log(data);
-      if (data?.cod === "400") throw data;
+      console.log("data: ", data);
+      if (data?.cod === "400" || data?.cod === "404") throw data;
       setWeatherData(data);
     } catch (err) {
-      console.log(err);
+      setNotFound(err);
+      console.log("err: ", err);
     }
   }
 
   const [capitalData, setData] = useState<any>([]);
 
+  const router = useRouter();
+  const origin =
+    typeof window !== "undefined" && window.location.origin
+      ? window.location.origin
+      : "";
+  const address_url = origin + router.asPath;
+
   const capAPI = async () => {
     try {
-      const res = await fetch(`http://localhost:3000/api/capital`);
+      const res = await fetch(address_url + `/api/capital`);
       const capitalData = await res.json();
       console.log(capitalData);
       const result = Object.values(capitalData);
@@ -53,13 +62,14 @@ export default function Home() {
     name: string;
   };
 
-  capitalData as {name: string};
+  capitalData as { name: string };
   const citysOptions = capitalData.map((city: any) => city.name);
 
   useEffect(() => {
     setTimeout(() => {
       capAPI();
     }, 100);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const dateBuilder = (timezone: number) => {
@@ -112,7 +122,7 @@ export default function Home() {
     const today = `${day1}  ${dateN}  ${month1}  ${year}`;
     const fullDate = today + " " + time;
     return fullDate;
-  }
+  };
 
   return (
     <div
@@ -141,7 +151,11 @@ export default function Home() {
                   <br />
                   <b>Date and Time</b> {dateBuilder(weatherData.timezone)}
                   <br />
-                  <b>Status</b> {weatherData.weather[0].description}
+                  {notFound.cod !== 404 ? (
+                    <>
+                      <b>Status</b> {weatherData.weather[0].description}
+                    </>
+                  ) : null}
                 </Text>
               </Group>
               <Group position="left">
@@ -181,9 +195,7 @@ export default function Home() {
               )}
               value={cityInput}
               sx={{ width: 300 }}
-              onChange={(event: any, newValue: any) =>
-                setCityInput(newValue)
-              }
+              onChange={(event: any, newValue: any) => setCityInput(newValue)}
               freeSolo
             />
           </Group>
@@ -191,12 +203,23 @@ export default function Home() {
             <Button
               disabled={!cityInput}
               variant="gradient"
-              gradient={{ from: 'indigo', to: 'cyan' }}
+              gradient={{ from: "indigo", to: "cyan" }}
               size="md"
               onClick={() => getWeatherData()}
             >
               Get Weather
             </Button>
+            {notFound.cod == 404 ? (
+              <>
+                <Text
+                  variant="gradient"
+                  gradient={{ from: 'orange', to: 'red', deg: 45 }}
+                  fw={500}
+                >
+                  City not found
+                </Text>
+              </>
+            ) : null}
           </Group>
         </Paper>
       </div>
