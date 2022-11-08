@@ -45,7 +45,7 @@ export default function Home() {
       const result = Object.values(capitalData);
       setData(result);
     } catch (err) {
-      console.log(error);
+      console.log(err);
     }
   };
 
@@ -53,7 +53,8 @@ export default function Home() {
     name: string;
   };
 
-  const citysOptions = capitalData.map((city) => city.name);
+  capitalData as {name: string};
+  const citysOptions = capitalData.map((city: any) => city.name);
 
   useEffect(() => {
     setTimeout(() => {
@@ -88,15 +89,15 @@ export default function Home() {
     ];
 
     const date = new Date();
-    var day = date.getDay();
+    const day = date.getDay();
     const dateN = date.getDate();
-    var month = date.getMonth();
+    const month = date.getMonth();
     const year = date.getFullYear();
-    day = dL[day];
-    month = mL[month];
+    const day1: string = dL[day];
+    const month1 = mL[month];
 
-    var hour = date.getUTCHours();
-    var min = date.getMinutes();
+    var hour: any = date.getUTCHours();
+    var min: any = date.getMinutes();
 
     const timezoneUTC = timezone / 3600;
 
@@ -108,7 +109,7 @@ export default function Home() {
     min = ("0" + min).slice(-2);
     const time = `${hour}:${min}`;
 
-    const today = `${day}  ${dateN}  ${month}  ${year}`;
+    const today = `${day1}  ${dateN}  ${month1}  ${year}`;
     const fullDate = today + " " + time;
     return fullDate;
   }
@@ -175,12 +176,12 @@ export default function Home() {
                 <TextField
                   {...params}
                   label="City"
-                  onChange={(e) => setCityInput(e.target.value)}
+                  onChange={(e: any) => setCityInput(e.target.value)}
                 />
               )}
               value={cityInput}
               sx={{ width: 300 }}
-              onChange={(event: any, newValue: City | null) =>
+              onChange={(event: any, newValue: any) =>
                 setCityInput(newValue)
               }
               freeSolo
@@ -189,7 +190,8 @@ export default function Home() {
           <Group position="apart">
             <Button
               disabled={!cityInput}
-              constiant="gradient"
+              variant="gradient"
+              gradient={{ from: 'indigo', to: 'cyan' }}
               size="md"
               onClick={() => getWeatherData()}
             >

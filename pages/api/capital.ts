@@ -744,8 +744,7 @@ const Capital = [
 
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Capital>,
-  next: NextFunction
+  res: NextApiResponse
 ) {
   res.status(200).json(Capital);
 }
